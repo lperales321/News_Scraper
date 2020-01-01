@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width-device-width, initial-scale=1">
+    <title>News Scraper</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.0.0/materia/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cormorant+SC">
+    <link rel="stylesheet" href="/assets/css/style.css" type="text/css">
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="navbar-brand" href="/">Bookstore Scraper</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/saved">Saved Books</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-danger scrape-new" href="/scrape">SCRAPE NEW BOOKS</a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-danger" href="/clear">CLEAR BOOKS</a>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+
+    <div class="jumbotron text-center">
+        <div class="caption">
+            <h1>Bookstore Scraper</h1>
+        </div>
+    </div>
+
+    {{{ body }}}
+
+    {{!-- <div class="container-fluid article-container">
+        <div class="card">
+            <div class="card-header">
+                <h3>
+                    <a class="article-link" target="_blank" rel="noopener noreferrer" href="https://www.nytimes.com/interactive/2019/12/15/technology/decade-in-tech.html"></a>
+                    <a class="btn btn-success save">Save Book</a>
+                </h3>
+            </div>
+        </div>
+    </div> --}}
+
+    {{!-- <h3 class="header">BookStore Scraper</h3>
+    <div id="buttons">
+      <button class="btn" id="weight-sort">Sort By Weight</button>
+      <button class="btn" id="name-sort">Sort By Name</button>
+    </div>
+    <table id="results">
+      <thead>
+        <tr>
+          <th id="animal-name">Name</th>
+          <th id="animal-legs">Num Legs</th>
+          <th id="animal-class">Class</th>
+          <th id="animal-weight">Weight</th>
+          <th id="animal-new-name">But I'd Call It...</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Results from DB here -->
+      </tbody>
+    </table>
+    <script src="app.js"></script> --}}
+  </body>
+</html>
