@@ -1,6 +1,6 @@
 <div class="jumbotron text-center">
     <div class="caption">
-        <h1>Astronomy Scraper</h1>
+        <h1>Saved Astronomy Articles</h1>
     </div>
 </div>
 
@@ -14,7 +14,8 @@
                 </h5>
                 <h3>
                   <a class="article-link" target="_blank" rel="noopener noreferrer" href={{link}}>{{title}}</a>
-                  <a class="btn btn-success save" data-id={{_id}}>Save Article</a>
+                  <a class="btn btn-success delArticle" data-id={{_id}}>Delete From Saved</a>
+                  <a class="btn btn-success getNotes" data-id={{_id}}>Article Notes</a>
                 </h3>
                 <h5>
                   By: {{author}}

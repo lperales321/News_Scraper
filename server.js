@@ -16,7 +16,7 @@ app.set("view engine", "handlebars");
 
 // Database configuration
 var databaseUrl = "scraper";
-var collections = ["scrapedData"];
+var collections = ["scrapedData", "savedArticles", "notes"];
 
 // Hook mongojs configuration to the db variable
 var db = mongojs(databaseUrl, collections);
@@ -110,6 +110,38 @@ app.get("/clear", function(req, res) {
         console.log("Articles Cleared");
         res.render("index", {})
     }
+    });
+});
+
+// Get a specific article by id, populate it with its note
+app.get("/articles/:id", function(req, res) {
+    // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
+    db.scrapedData.findOne({ _id: req.params.id })
+      .then(function(dbArticle) {
+        // If we were able to successfully find an Article with the given id, insert it into savedArticles
+        db.savedArticles.insert({
+            articleId   : dbArticle._id,
+            title       : dbArticle.title,
+            link        : dbArticle.link,
+            articleDate : dbArticle.articleDate,
+            author      : dbArticle.author,
+            summary     : dbArticle.summary
+          },
+          function(err, data) {
+            if (err) {
+              // Log the error if one is encountered during the query
+              console.log(err);
+            }
+            else {
+              // Otherwise, log the inserted data
+              console.log(data);
+              res.render("saved", {data});
+            }
+          });
+      })
+      .catch(function(err) {
+        // If an error occurred, send it to the client
+        res.json(err);
     });
 });
 
