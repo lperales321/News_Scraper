@@ -1,15 +1,48 @@
-{{#each found}}
-  <div class="container-fluid article-container">
-      <div class="card">
-          <div class="card-header">
-              <h3>
+{{#if data}}
+  {{#each data}}
+    <div class="container-fluid article-container">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                  {{articleDate}}
+                </h5>
+                <h3>
                   <a class="article-link" target="_blank" rel="noopener noreferrer" href={{link}}>{{title}}</a>
-                  <a class="btn btn-success save">Save Book</a>
-              </h3>
-          </div>
-          <div class="card-body">
-              {{price}}
-          </div>
+                  <a class="btn btn-success save" data-id={{_id}}>Save Article</a>
+                </h3>
+                <h5>
+                  By: {{author}}
+                </h5>
+            </div>
+            <div class="card-body">
+                <h4>
+                  {{summary}}
+                </h4>
+            </div>
+        </div>
+    </div>
+  {{/each}}
+{{else}}
+  <div class="container-fluid article-container">
+    <div class="card">
+      <div class="card-header">
+        <h3>
+          Uh Oh. Looks like we don't have any new articles.
+        </h3>
       </div>
   </div>
-{{/each}}
+    <div class="card">
+      <div class="card-header">
+          <h3>
+            What Would You Like To Do?
+          </h3>
+      </div>
+      <div class="card-body">
+          <h3>
+            <a class="nav-link" href="/scrape">Try Scraping New Articles</a>
+            <a class="nav-link" href="/saved">Go to Saved Articles</a>
+          </h3>
+      </div>
+    </div>
+  </div>
+{{/if}}

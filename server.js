@@ -26,29 +26,27 @@ db.on("error", function(error) {
 
 // Main route
 app.get("/", function(req, res) {
-  res.send("Hello world");
+  res.redirect('/all');
 });
 
 // Retrieve data from the db
 app.get("/all", function(req, res) {
 
   // Find all results from the scrapedData collection in the db
-  db.scrapedData.find({}, function(error, found) {
+  db.scrapedData.find({}, function(error, data) {
     // Throw any errors to the console
     if (error) {
       console.log(error);
     }
     // If there are no errors, send the data to the browser as json
     else {
-      //res.json(found);
-      res.render("index", {found});
+      res.render("index", {data});
     }
   });
 });
 
 // Scrape data from one site and place it into the mongodb db
 app.get("/scrape", function(req, res) {
-
   // Make a request via axios
   axios.get("https://www.nature.com/natastron/articles").then(function(response) {
 
@@ -81,7 +79,8 @@ app.get("/scrape", function(req, res) {
           }
           else {
             // Otherwise, log the inserted data
-            //console.log(inserted);
+            console.log(inserted);
+            //res.render("index", {data});
           }
         });
       }
@@ -95,6 +94,24 @@ app.get("/scrape", function(req, res) {
   res.send("Scrape Complete");
 });
 
+// Delete scraped data from mongo db
+app.get("/clear", function(req, res) {
+    console.log("now here")
+    // Delete all scraped articles
+    db.scrapedData.remove({
+    },
+    function(err, deleted) {
+    if (err) {
+        // Log the error if one is encountered during the query
+        console.log(err);
+    }
+    else {
+        // Otherwise, log complete
+        console.log("Articles Cleared");
+        res.render("index", {})
+    }
+    });
+});
 
 // Listen on port
 app.listen(PORT, function() {

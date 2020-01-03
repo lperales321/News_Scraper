@@ -2,32 +2,204 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width-device-width, initial-scale=1">
-    <title>News Scraper</title>
+    {{!-- <meta name="viewport" content="width-device-width, initial-scale=1"> --}}
+    <title>Article Scraper</title>
+    <style>
+        html {
+            position: relative;
+            min-height: 100%;
+        }
+        
+        body {
+            margin-bottom: 80px;
+            background-image: url("../images/paper.png");
+        }
+        
+        .card a:not([href]):not([tabindex]).scrape-new {
+            color: #2196F3;
+        }
+        
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 80px;
+            color: white;
+            background-color: #2196f3;
+        }
+        
+        .navbar {
+            margin-bottom: 0;
+        }
+        
+        .jumbotron {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            padding: 0;
+            font-family: "Cormorant SC";
+            box-shadow: 10px 5px 20px 2px lightslategrey;
+        }
+        
+        .jumbotron .overlay {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            z-index: auto;
+            background: linear-gradient(#333, black);
+            opacity: 0.7;
+        }
+        
+        .jumbotron .background-image {
+            height: 100%;
+            background-image: url("../images/newspaper.jpg");
+            background-size: cover;
+        }
+        
+        .jumbotron .caption {
+            position: absolute;
+            top: 30%;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .jumbotron .caption h1,
+        .jumbotron .caption p {
+            color: white;
+        }
+        
+        .jumbotron h1 {
+            font-size: 80px;
+            font-weight: 800;
+        }
+        
+        .jumbotron p {
+            font-size: 30px;
+        }
+        
+        .article-container {
+            padding-bottom: 25px;
+        }
+        
+        .card {
+            border-radius: 0;
+            box-shadow: 3px 3px 20px lightslategrey;
+            margin: 20px 0;
+        }
+        
+        .card .card-header {
+            background-color: #2196f3;
+            position: relative;
+            padding-top: 30px;
+            padding-bottom: 30px;
+        }
+        
+        .card .card-header h3 {
+            color: white;
+        }
+        
+        .card .card-header .btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        .card .card-header .btn.delete {
+            right: 160px;
+        }
+        
+        .card .card-body {
+            font-size: 16px;
+        }
+        
+        .card .card-header .article-link {
+            color: white;
+            display: inline-block;
+            width: 80%;
+        }
+        
+        .footer > .container > p {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            padding: 5px;
+            padding-bottom: 5px;
+            padding-left: 10px;
+            margin: 0;
+            font-weight: 800;
+            background: #0c7cd5;
+        }
+        
+        .navbar-nav > li > a.scrape-new,
+        .navbar-nav > li > a.clear {
+            padding: 10px;
+            margin-top: 10px;
+            margin-left: 10px;
+            font-weight: 800;
+            color: white;
+        }
+        
+        .navbar-nav > li > a.scrape-new:hover,
+        .navbar-nav > li > a.clear:hover {
+            background: #4caf50;
+        }
+        
+        .navbar-nav > li > a.scrape-new:active {
+            background: #e51c23;
+        }
+        
+        .scrape-new {
+            cursor: pointer;
+        }
+        
+        .m-top-80 {
+            margin-top: 80px;
+        }
+        
+        textarea {
+            padding: 10px;
+            resize: none;
+            width: 100%;
+        }
+        
+        .bootbox-body .btn {
+            float: right;
+            margin: 5px;
+        }
+        
+        .note.list-group-item .btn {
+            position: relative;
+            bottom: 10px;
+        }
+    </style>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.0.0/materia/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cormorant+SC">
-    <link rel="stylesheet" href="/assets/css/style.css" type="text/css">
+    {{!-- <link rel="stylesheet" href="/assets/css/style.css" type="text/html"> --}}
   </head>
 
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <a class="navbar-brand" href="/">Bookstore Scraper</a>
+        <a class="navbar-brand" href="/">Astronomy Scraper</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav">
                 <li class="nav-item active">
                     <a class="nav-link" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/saved">Saved Books</a>
+                    <a class="nav-link" href="/saved">Saved Articles</a>
                 </li>
                 <li class="nav-item">
-                    <a class="btn btn-danger scrape-new" href="/scrape">SCRAPE NEW BOOKS</a>
+                    <a class="btn btn-danger scrape-new" href="/scrape">SCRAPE NEW ARTICLES</a>
                 </li>
                 <li class="nav-item">
-                    <a class="btn btn-danger" href="/clear">CLEAR BOOKS</a>
+                    <a class="btn btn-danger" href="/clear">CLEAR ARTICLES</a>
                 </li>
 
             </ul>
@@ -36,11 +208,14 @@
 
     <div class="jumbotron text-center">
         <div class="caption">
-            <h1>Bookstore Scraper</h1>
+            <h1>Astronomy Scraper</h1>
         </div>
     </div>
 
     {{{ body }}}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="app.js"></script>
 
     {{!-- <div class="container-fluid article-container">
         <div class="card">
