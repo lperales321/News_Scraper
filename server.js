@@ -24,16 +24,11 @@ db.on("error", function(error) {
   console.log("Database Error:", error);
 });
 
-// Main route
-app.get("/", function(req, res) {
-  res.redirect('/all');
-});
-
 // Retrieve data from the db
-app.get("/all", function(req, res) {
+app.get("/", function(req, res) {
 
   // Find all results from the scrapedData collection in the db
-  db.scrapedData.find({}, function(error, data) {
+  db.scrapedData.find({saved: false}, function(error, data) {
     // Throw any errors to the console
     if (error) {
       console.log(error);
@@ -70,7 +65,8 @@ app.get("/scrape", function(req, res) {
           link,
           articleDate,
           author,
-          summary
+          summary,
+          saved: false
         },
         function(err, inserted) {
           if (err) {
@@ -144,6 +140,42 @@ app.get("/articles/:id", function(req, res) {
         res.json(err);
     });
 });
+
+// $(document).on("click", ".btn.save", function(){
+//     // Empty the notes from the note section
+//     //$("#notes").empty();
+//     // Save the id from the save tag
+//     console.log("here")
+//     var thisId = $(this).attr("data-id");
+//     console.log(thisId);
+  
+    // Now make an ajax call for the Article
+    // $.ajax({
+    //   method: "GET",
+    //   url: "/articles/" + thisId
+    // })
+    //   // With that done, add the note information to the page
+    //   .then(function(data) {
+    //     console.log(data);
+    //     // The title of the article
+    //     $("#notes").append("<h2>" + data.title + "</h2>");
+    //     // An input to enter a new title
+    //     $("#notes").append("<input id='titleinput' name='title' >");
+    //     // A textarea to add a new note body
+    //     $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
+    //     // A button to submit a new note, with the id of the article saved to it
+    //     $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
+  
+    //     // If there's a note in the article
+    //     if (data.note) {
+    //       // Place the title of the note in the title input
+    //       $("#titleinput").val(data.note.title);
+    //       // Place the body of the note in the body textarea
+    //       $("#bodyinput").val(data.note.body);
+    //     }
+    //   });
+  //});
+
 
 // Listen on port
 app.listen(PORT, function() {

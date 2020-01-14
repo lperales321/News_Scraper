@@ -12,7 +12,7 @@
         
         body {
             margin-bottom: 80px;
-            background-image: url("../images/paper.png");
+            {{!-- background-image: url("../images/paper.png"); --}}
         }
         
         .card a:not([href]):not([tabindex]).scrape-new {
@@ -54,7 +54,7 @@
         
         .jumbotron .background-image {
             height: 100%;
-            background-image: url("../images/newspaper.jpg");
+            {{!-- background-image: url("../images/newspaper.jpg"); --}}
             background-size: cover;
         }
         
@@ -177,11 +177,13 @@
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="/public/assets/javascript/app.js"></script>
 
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.0.0/materia/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cormorant+SC">
     {{!-- <link rel="stylesheet" href="/assets/css/style.css" type="text/html"> --}}
+    
   </head>
 
   <body>
@@ -205,10 +207,8 @@
             </ul>
         </div>
     </nav>
-    
-    {{{ body }}}
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="app.js"></script>
+    {{{ body }}}
+    
   </body>
 </html>
