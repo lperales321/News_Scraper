@@ -1,6 +1,7 @@
 // Dependencies
 var express = require("express");
-var mongojs = require("mongojs");
+var db = require("./models/Article.js");
+var mongoose = require("mongoose");
 
 // Require axios and cheerio. This makes the scraping possible
 var axios = require("axios");
@@ -8,7 +9,6 @@ var cheerio = require("cheerio");
 
 // Initialize Express
 var app = express();
-
 var PORT = process.env.PORT || 3000;
 
 var exphbs = require("express-handlebars");
@@ -16,11 +16,11 @@ app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
 // Database configuration
-var databaseUrl = "scraper";
-var collections = ["scrapedData", "savedArticles", "notes"];
+// If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/scraper";
+mongoose.connect(MONGODB_URI);
 
-// Hook mongojs configuration to the db variable
-var db = mongojs(databaseUrl, collections);
+
 db.on("error", function(error) {
   console.log("Database Error:", error);
 });
@@ -46,24 +46,24 @@ app.get("/", function(req, res) {
 
       //If this found element had a title, link, articleDate, author, summary
       if (title && link && articleDate && author && summary) {
-        // Insert the data in the scrapedData db
-        db.scrapedData.insert({
+        var scrapedArticle = {
           title,
           link,
           articleDate,
           author,
           summary,
           saved: false
-        },
-        function(err, inserted) {
-          if (err) {
-            // Log the error if one is encountered during the query
-            console.log(err);
-          }
-          else {
-            // Otherwise, log the inserted data
-            console.log(inserted);
-          }
+        };
+
+        // Insert the data in the scrapedData db
+        db.create(scrapedArticle)
+        .then(function(dbArticle) {
+          // View the added result in the console
+          console.log(dbArticle);
+        })
+        .catch(function(err) {
+          // If an error occurred, log it
+          console.log(err);
         });
       }
     });
@@ -80,7 +80,7 @@ app.get("/", function(req, res) {
 app.get("/getAll", function(req, res) {
 
   // Find all results from the scrapedData collection in the db
-  db.scrapedData.find({saved: false}, function(error, data) {
+  db.find({saved: false}, function(error, data) {
     // Throw any errors to the console
     if (error) {
       console.log(error);
@@ -96,7 +96,7 @@ app.get("/getAll", function(req, res) {
 app.get("/saved", function(req, res) {
 
   // Find all results from the scrapedData collection in the db
-  db.scrapedData.find({saved: true}, function(error, data) {
+  db.find({saved: true}, function(error, data) {
     // Throw any errors to the console
     if (error) {
       console.log(error);
@@ -119,7 +119,7 @@ app.post("/article/:id", function(req, res) {
   console.log(dataId);
 
   // Update save article
-  db.scrapedData.update({'_id': ObjectID(dataId)}, {$set: {saved: true}}, function(error, data) {
+  db.update({'_id': ObjectID(dataId)}, {$set: {saved: true}}, function(error, data) {
     // Throw any errors to the console
     if (error) {
       console.log(error);
@@ -140,7 +140,7 @@ app.post("/article/delete/:id", function(req, res) {
   console.log(dataId);
 
   // Update save article
-  db.scrapedData.update({'_id': ObjectID(dataId)}, {$set: {saved: false}}, function(error, data) {
+  db.update({'_id': ObjectID(dataId)}, {$set: {saved: false}}, function(error, data) {
     // Throw any errors to the console
     if (error) {
       console.log(error);
@@ -156,7 +156,7 @@ app.post("/article/delete/:id", function(req, res) {
 // Delete scraped data from mongo db
 app.get("/clear", function(req, res) {
     // Delete all scraped articles
-    db.scrapedData.remove({
+    db.remove({
     },
     function(err, deleted) {
     if (err) {
