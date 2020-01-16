@@ -8,6 +8,7 @@ var cheerio = require("cheerio");
 
 // Initialize Express
 var app = express();
+
 var PORT = process.env.PORT || 3000;
 
 var exphbs = require("express-handlebars");
@@ -24,24 +25,10 @@ db.on("error", function(error) {
   console.log("Database Error:", error);
 });
 
-// Retrieve data from the db
-app.get("/", function(req, res) {
-
-  // Find all results from the scrapedData collection in the db
-  db.scrapedData.find({saved: false}, function(error, data) {
-    // Throw any errors to the console
-    if (error) {
-      console.log(error);
-    }
-    // If there are no errors, send the data to the browser as json
-    else {
-      res.render("index", {data});
-    }
-  });
-});
+var ObjectID = require('mongodb').ObjectID; 
 
 // Scrape data from one site and place it into the mongodb db
-app.get("/scrape", function(req, res) {
+app.get("/", function(req, res) {
   // Make a request via axios
   axios.get("https://www.nature.com/natastron/articles").then(function(response) {
 
@@ -76,7 +63,6 @@ app.get("/scrape", function(req, res) {
           else {
             // Otherwise, log the inserted data
             console.log(inserted);
-            //res.render("index", {data});
           }
         });
       }
@@ -86,13 +72,89 @@ app.get("/scrape", function(req, res) {
     console.log(error)
   })
 
-  // Send a "Scrape Complete" message to the browser
-  res.send("Scrape Complete");
+  res.redirect("/getAll");
+
+});
+
+// Retrieve data from the db
+app.get("/getAll", function(req, res) {
+
+  // Find all results from the scrapedData collection in the db
+  db.scrapedData.find({saved: false}, function(error, data) {
+    // Throw any errors to the console
+    if (error) {
+      console.log(error);
+    }
+    // If there are no errors, send the data to the browser as json
+    else {
+      res.render("index", {data});
+    }
+  });
+});
+
+// Retrieve data from the db
+app.get("/saved", function(req, res) {
+
+  // Find all results from the scrapedData collection in the db
+  db.scrapedData.find({saved: true}, function(error, data) {
+    // Throw any errors to the console
+    if (error) {
+      console.log(error);
+    }
+    // If there are no errors, send the data to the browser as json
+    else {
+      res.render("saved", {data});
+    }
+  });
+});
+
+// Retrieve data from the website
+app.get("/scrape", function(req, res) {
+  res.redirect("/");
+});
+
+// Update data on the db
+app.post("/article/:id", function(req, res) {
+  let dataId = req.params.id;
+  console.log(dataId);
+
+  // Update save article
+  db.scrapedData.update({'_id': ObjectID(dataId)}, {$set: {saved: true}}, function(error, data) {
+    // Throw any errors to the console
+    if (error) {
+      console.log(error);
+    }
+    // If there are no errors, send the data to the browser as json
+    else {
+      //res.render("index", {saved});
+      res.redirect("/saved");
+    }
+  });
+});
+
+// Delete data on the db
+app.post("/article/delete/:id", function(req, res) {
+  console.log("deleted")
+
+  let dataId = req.params.id;
+  console.log(dataId);
+
+  // Update save article
+  db.scrapedData.update({'_id': ObjectID(dataId)}, {$set: {saved: false}}, function(error, data) {
+    // Throw any errors to the console
+    if (error) {
+      console.log(error);
+    }
+    // If there are no errors, send the data to the browser as json
+    else {
+      //res.render("index", {saved});
+      res.redirect("/getAll");
+    }
+  });
 });
 
 // Delete scraped data from mongo db
 app.get("/clear", function(req, res) {
-    console.log("now here")
     // Delete all scraped articles
     db.scrapedData.remove({
     },
@@ -108,74 +170,6 @@ app.get("/clear", function(req, res) {
     }
     });
 });
-
-// Get a specific article by id, populate it with its note
-app.get("/articles/:id", function(req, res) {
-    // Using the id passed in the id parameter, prepare a query that finds the matching one in our db...
-    db.scrapedData.findOne({ _id: req.params.id })
-      .then(function(dbArticle) {
-        // If we were able to successfully find an Article with the given id, insert it into savedArticles
-        db.savedArticles.insert({
-            articleId   : dbArticle._id,
-            title       : dbArticle.title,
-            link        : dbArticle.link,
-            articleDate : dbArticle.articleDate,
-            author      : dbArticle.author,
-            summary     : dbArticle.summary
-          },
-          function(err, data) {
-            if (err) {
-              // Log the error if one is encountered during the query
-              console.log(err);
-            }
-            else {
-              // Otherwise, log the inserted data
-              console.log(data);
-              res.render("saved", {data});
-            }
-          });
-      })
-      .catch(function(err) {
-        // If an error occurred, send it to the client
-        res.json(err);
-    });
-});
-
-// $(document).on("click", ".btn.save", function(){
-//     // Empty the notes from the note section
-//     //$("#notes").empty();
-//     // Save the id from the save tag
-//     console.log("here")
-//     var thisId = $(this).attr("data-id");
-//     console.log(thisId);
-  
-    // Now make an ajax call for the Article
-    // $.ajax({
-    //   method: "GET",
-    //   url: "/articles/" + thisId
-    // })
-    //   // With that done, add the note information to the page
-    //   .then(function(data) {
-    //     console.log(data);
-    //     // The title of the article
-    //     $("#notes").append("<h2>" + data.title + "</h2>");
-    //     // An input to enter a new title
-    //     $("#notes").append("<input id='titleinput' name='title' >");
-    //     // A textarea to add a new note body
-    //     $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
-    //     // A button to submit a new note, with the id of the article saved to it
-    //     $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
-  
-    //     // If there's a note in the article
-    //     if (data.note) {
-    //       // Place the title of the note in the title input
-    //       $("#titleinput").val(data.note.title);
-    //       // Place the body of the note in the body textarea
-    //       $("#bodyinput").val(data.note.body);
-    //     }
-    //   });
-  //});
-
 
 // Listen on port
 app.listen(PORT, function() {

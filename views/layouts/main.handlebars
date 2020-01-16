@@ -177,7 +177,6 @@
     </style>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="/public/assets/javascript/app.js"></script>
 
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.0.0/materia/bootstrap.min.css">
@@ -195,10 +194,10 @@
                     <a class="nav-link" href="/">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/saved">Saved Articles</a>
+                    <a class="btn btn-danger" href="/saved">SAVED ARTICLES</a>
                 </li>
                 <li class="nav-item">
-                    <a class="btn btn-danger scrape-new" href="/scrape">SCRAPE NEW ARTICLES</a>
+                    <a class="btn btn-danger" href="/scrape">SCRAPE NEW ARTICLES</a>
                 </li>
                 <li class="nav-item">
                     <a class="btn btn-danger" href="/clear">CLEAR ARTICLES</a>
@@ -210,5 +209,36 @@
 
     {{{ body }}}
     
+    
+
   </body>
+
+    <script>
+        $(".save").on("click", function() {
+            // Save the id from the save tag
+            var thisId = $(this).attr("data-id");
+
+            $.ajax({
+            method: "POST",
+            url: "/article/" + thisId
+            })
+            .then(function(data) {
+                console.log("updated");
+            });
+        });
+
+        $(".delArticle").on("click", function() {
+            // Save the id from the save tag
+            var thisId = $(this).attr("data-id");
+
+            $.ajax({
+            method: "POST",
+            url: "/article/delete/" + thisId
+            })
+            .then(function(data) {
+                console.log("deleted");
+            });
+        });
+    </script>
+
 </html>

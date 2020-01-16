@@ -1,4 +1,4 @@
-<div class="jumbotron text-center">
+<div class="jumbotron text-center" style="background-color: black;">
     <div class="caption">
         <h1>Saved Astronomy Articles</h1>
     </div>
@@ -10,20 +10,19 @@
         <div class="card">
             <div class="card-header">
                 <h5>
-                  {{articleDate}}
+                  {{this.articleDate}}
                 </h5>
                 <h3>
-                  <a class="article-link" target="_blank" rel="noopener noreferrer" href={{link}}>{{title}}</a>
-                  <a class="btn btn-success delArticle" data-id={{_id}}>Delete From Saved</a>
-                  <a class="btn btn-success getNotes" data-id={{_id}}>Article Notes</a>
+                  <a class="article-link" target="_blank" rel="noopener noreferrer" href={{this.link}}>{{this.title}}</a>
+                  <a class="btn btn-success delArticle" data-id={{this._id}}>Delete From Saved</a>
                 </h3>
                 <h5>
-                  By: {{author}}
+                  By: {{this.author}}
                 </h5>
             </div>
             <div class="card-body">
                 <h4>
-                  {{summary}}
+                  {{this.summary}}
                 </h4>
             </div>
         </div>
